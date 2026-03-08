@@ -1,10 +1,52 @@
-from fastapi import APIRouter
-from app.services.user_service import get_all_users
-from typing import List
-from app.models.user_model import User
+# file: app/api/routes/users.py
+
+from fastapi import APIRouter, HTTPException
+from supabase import create_client
+import os
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-@router.get("/", response_model=List[User])
-def read_users():
-    return get_all_users()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+# CREATE
+@router.post("/")
+def create_user(user: dict):
+    try:
+        response = supabase.table("users").insert(user).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# READ
+@router.get("/")
+def get_users():
+    try:
+        response = supabase.table("users").select("*").execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# UPDATE
+@router.put("/{user_id}")
+def update_user(user_id: int, user: dict):
+    try:
+        response = supabase.table("users").update(user).eq("id", user_id).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# DELETE
+@router.delete("/{user_id}")
+def delete_user(user_id: int):
+    try:
+        response = supabase.table("users").delete().eq("id", user_id).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
