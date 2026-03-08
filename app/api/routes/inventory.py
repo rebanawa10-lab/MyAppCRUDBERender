@@ -33,10 +33,10 @@ def get_inventory():
 
 
 # GET one inventory
-@router.get("/{item_id}")
-def get_inventory_item(item_id: int):
+@router.get("/{pid}")
+def get_inventory_item(pid: int):
     try:
-        response = supabase.table("inventory").select("*").eq("id", item_id).execute()
+        response = supabase.table("inventory").select("*").eq("id", pid).execute()
 
         if not response.data:
             return {"message": "Item not found"}
@@ -48,20 +48,20 @@ def get_inventory_item(item_id: int):
 
 
 # UPDATE inventory
-@router.put("/{item_id}")
-def update_inventory(item_id: int, item: dict):
+@router.put("/{pid}")
+def update_inventory(pid: int, item: dict):
     try:
-        response = supabase.table("inventory").update(item).eq("id", item_id).execute()
+        response = supabase.table("inventory").update(item).eq("id", pid).execute()
         return response.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # DELETE inventory
-@router.delete("/{item_id}")
-def delete_inventory(item_id: int):
+@router.delete("/{pid}")
+def delete_inventory(pid: int):
     try:
-        response = supabase.table("inventory").delete().eq("id", item_id).execute()
+        response = supabase.table("inventory").delete().eq("id", pid).execute()
         return response.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
