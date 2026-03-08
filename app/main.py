@@ -8,6 +8,8 @@ import logging
 
 app = FastAPI()
 
+APP_VERSION = "v1.0"
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
@@ -33,7 +35,9 @@ app.include_router(inventory.router)
 def root():
     return {"message": "FastAPI + Supabase running"}
 
-
+@app.get("/version")
+def version():
+    return {"version": APP_VERSION}
 
 @app.get("/testdb")
 def test_db():
