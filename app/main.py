@@ -1,35 +1,15 @@
-# file:    main.py 
+# file:     app/main.py
 
-#Local PC MS SQL Server. Ok
-#from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
-
-#Supabase config
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-#from sqlalchemy import text
-
-
-#Local PC MS SQL Server. Ok
-#from .database import engine
-
-#Supabase config
-from .database import engine, get_db
-
-from . import models
-# OLD:
-#from app.api.routes.user import router as user_router
-
-# NEW:
-# Import routers
-from .api.routes import user, inventory
-
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
-
+from app.api.routes import inventory, user
+from app.supabase_client import supabase
+import logging
 
 app = FastAPI()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 # CORS
 app.add_middleware(
@@ -43,22 +23,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# OLD
-# INCLUDE ROUTER
-#app.include_router(user_router, prefix="/users", tags=["Users"])
-
-# NEW:
 # Include routers
 app.include_router(user.router)
 app.include_router(inventory.router)
 
 
+
 @app.get("/")
 def root():
-    return {"message": "FastAPI is running"}
+    return {"message": "FastAPI + Supabase running"}
 
-#Supabase config
+
+
 @app.get("/testdb")
-def test_db(db: Session = Depends(get_db)):
-    result = db.execute("SELECT 1").scalar()
-    return {"status": "connected" if result == 1 else "failed"}
+def test_db():
+    try:
+        # Attempt to fetch 1 user from Supabase
+        response = supabase.table("users").select("*").limit(1).execute()
+
+        if response.error:
+            # Supabase returned an error
+            logging.error(f"Supabase error: {response.error}")
+            raise HTTPException(status_code=500, detail=f"Supabase error: {response.error}")
+
+        # Successful response
+        return {"connected": True, "data": response.data}
+
+    except Exception as e:
+        # Log unexpected exceptions
+        logging.exception("Unexpected error when testing database connection")
+        raise HTTPException(status_code=500, detail=f"Database connection failed: {e}")
