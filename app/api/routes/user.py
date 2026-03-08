@@ -30,6 +30,20 @@ def get_users():
         return response.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# Get One User
+@router.get("/{user_id}")
+def get_user(user_id: int):
+    try:
+        response = supabase.table("users").select("*").eq("id", user_id).execute()
+
+        if not response.data:
+            return {"message": "User not found"}
+
+        return response.data[0]
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # UPDATE
