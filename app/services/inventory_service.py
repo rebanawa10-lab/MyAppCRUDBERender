@@ -10,7 +10,7 @@ def get_all_inventory() -> List[InventoryItem]:
     return [InventoryItem(**item) for item in items_data]
 
 def get_inventory_by_id(pid: int) -> InventoryItem | None:
-    response = supabase.table("inventory").select("*").eq("id", pid).limit(1).execute()
+    response = supabase.table("inventory").select("*").eq("pid", pid).limit(1).execute()
     if not response.data:
         return None
     return InventoryItem(**response.data[0])

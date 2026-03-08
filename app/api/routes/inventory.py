@@ -36,7 +36,7 @@ def get_inventory():
 @router.get("/{pid}")
 def get_inventory_item(pid: int):
     try:
-        response = supabase.table("inventory").select("*").eq("id", pid).execute()
+        response = supabase.table("inventory").select("*").eq("pid", pid).execute()
 
         if not response.data:
             return {"message": "Item not found"}
@@ -51,7 +51,7 @@ def get_inventory_item(pid: int):
 @router.put("/{pid}")
 def update_inventory(pid: int, item: dict):
     try:
-        response = supabase.table("inventory").update(item).eq("id", pid).execute()
+        response = supabase.table("inventory").update(item).eq("pid", pid).execute()
         return response.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -61,7 +61,7 @@ def update_inventory(pid: int, item: dict):
 @router.delete("/{pid}")
 def delete_inventory(pid: int):
     try:
-        response = supabase.table("inventory").delete().eq("id", pid).execute()
+        response = supabase.table("inventory").delete().eq("pid", pid).execute()
         return response.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
