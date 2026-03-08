@@ -13,7 +13,7 @@ import os
 
 app = FastAPI()
 
-APP_VERSION = "v1.0"
+APP_VERSION = "v1.3"
 
 # Supabase connection
 SUPABASE_URL = os.getenv("SUPABASE_URL")
