@@ -13,7 +13,7 @@ import os
 
 app = FastAPI()
 
-APP_VERSION = "v1.3"
+APP_VERSION = "v1.4"
 
 # Supabase connection
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -28,12 +28,14 @@ app.add_middleware(
     # allow_origins=[
     #     "http://localhost:5173",
     #     "http://127.0.0.1:5173",
+    #  "https://myappcrudberender.onrender.com",  # optional if calling from same domain
     # ],
      allow_origins=[
-        "http://localhost:4173",  # Vite preview locally
-        "http://localhost:5173",  # dev
-        "https://rebanawa10-lab.github.io/MyAppCRUDFEReact",  # frontend prod
-        "https://myappcrudberender.onrender.com",  # optional if calling from same domain
+        "http://localhost:4173",  # npm run preview locally
+        "http://localhost:5173",  # npm run dev
+        "https://rebanawa10-lab.github.io",                     # GitHub Pages root
+        "https://rebanawa10-lab.github.io/MyAppCRUDFEReact",    # GitHub Pages project page
+       
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -43,8 +45,6 @@ app.add_middleware(
 # Include routers
 app.include_router(user.router)
 app.include_router(inventory.router)
-
-
 
 @app.get("/")
 def root():
@@ -60,17 +60,31 @@ def version():
 def test_db():
     try:
         response = supabase.table("inventory").select("*").limit(1).execute()
-
-        return {
-            "database": "connected",
-            "data": response.data
-        }
-
+        if response.error:
+            logging.error(f"Supabase error: {response.error}")
+            raise HTTPException(status_code=500, detail=f"Supabase error: {response.error}")
+        return {"database": "connected", "data": response.data}
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Database connection failed: {str(e)}"
-        )
+        logging.exception("Database connection failed")
+        raise HTTPException(status_code=500, detail=f"Database connection failed: {e}")
+    
+
+# OLDV2:
+# def test_db():
+#     try:
+#         response = supabase.table("inventory").select("*").limit(1).execute()
+
+#         return {
+#             "database": "connected",
+#             "data": response.data
+#         }
+
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=500,
+#             detail=f"Database connection failed: {str(e)}"
+#         )
+
 
 # OLD: 
 # @app.get("/testdb")
