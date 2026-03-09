@@ -30,8 +30,9 @@ app.add_middleware(
     #     "http://127.0.0.1:5173",
     # ],
      allow_origins=[
+        "http://localhost:4173",  # Vite preview locally
         "http://localhost:5173",  # dev
-        "https://rebanawa10-lab.github.io",  # frontend prod
+        "https://rebanawa10-lab.github.io/MyAppCRUDFEReact",  # frontend prod
         "https://myappcrudberender.onrender.com",  # optional if calling from same domain
     ],
     allow_credentials=True,
