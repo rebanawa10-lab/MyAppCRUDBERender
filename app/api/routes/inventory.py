@@ -1,4 +1,4 @@
-# file: app/api/routes/inventory.py
+# file:     app/api/routes/inventory.py
 
 from fastapi import APIRouter, HTTPException
 from supabase import create_client

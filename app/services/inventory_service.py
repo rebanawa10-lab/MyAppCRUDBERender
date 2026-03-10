@@ -1,4 +1,4 @@
-# file: app/services/inventory_service.py
+# file:     app/services/inventory_service.py
 
 from app.supabase_client import supabase
 from typing import List

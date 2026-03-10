@@ -1,4 +1,4 @@
-# file: app/models/inventory_model.py
+# file:     app/models/inventory_model.py
 
 from pydantic import BaseModel
 from typing import Optional

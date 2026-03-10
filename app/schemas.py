@@ -12,3 +12,8 @@ class InventoryCreate(BaseModel):
 class UserCreate(BaseModel):
     username: str
     email: str
+
+
+class TodoCreate(BaseModel):
+    name: str
+    

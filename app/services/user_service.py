@@ -1,3 +1,5 @@
+# file:     app/services/user_service.py
+
 from app.supabase_client import supabase
 from typing import List
 from app.models.user_model import User
